@@ -1,0 +1,178 @@
+import 'package:flutter/material.dart';
+import 'package:nearby_connections/nearby_connections.dart';
+import 'dart:io';
+import 'dart:math';
+import 'dart:developer';
+
+void main() => runApp(MyApp());
+
+
+// #docregion MyApp
+class MyApp extends StatelessWidget {
+  // #docregion build
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Nearby Contacts',
+      theme: ThemeData(          // Add the 3 lines from here... 
+        primaryColor: Colors.blue,
+      ),                         // ... to here.
+       home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Nearby Contacts'),
+        ),
+        body: NearbyContactsPage(),
+      ),
+    );
+  }
+  // #enddocregion build
+}
+// #enddocregion MyApp
+
+class NearbyContactsPage extends StatefulWidget {
+  @override
+  _NearbyContactsPageState createState() => _NearbyContactsPageState();
+}
+
+class _NearbyContactsPageState extends State<NearbyContactsPage> {
+
+  final String userName = Random().nextInt(10000).toString();
+  final Strategy strategy = Strategy.P2P_STAR;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _buildNearbyList(),
+            FlatButton(
+              child: new Text('Advertise'),
+              onPressed: () async{
+                try {
+                  bool a = await Nearby().startAdvertising(
+                      userName,
+                      strategy,
+                      onConnectionInitiated: (String id,ConnectionInfo info) {
+                      // Called whenever a discoverer requests connection 
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("id : $id \n Info :$info")));
+                      },
+                      onConnectionResult: (String id,Status status) {
+                      // Called when connection is accepted/rejected
+                      },
+                      onDisconnected: (String id) {
+                      // Callled whenever a discoverer disconnects from advertiser
+                      },
+                      serviceId: "com.yourdomain.appname", // uniquely identifies your app
+                  );
+                  } catch (exception) {
+                      // platform exceptions like unable to start bluetooth or insufficient permissions 
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("$exception")));
+                  }
+              }
+            ,),
+            FlatButton(
+              child: new Text('Discover'),
+              onPressed: () async{
+                try {
+                    bool a = await Nearby().startDiscovery(
+                        userName,
+                        strategy,
+                        onEndpointFound: (String id,String userName, String serviceId) {
+                            // called when an advertiser is found
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("id : $id \n Username :$userName \n serviceID : $serviceId")));
+                        },
+                        onEndpointLost: (String id) {
+                            //called when an advertiser is lost (only if we weren't connected to it )
+                        },
+                        serviceId: "com.yourdomain.appname", // uniquely identifies your app
+                    );
+                } catch (e) {
+                    // platform exceptions like unable to start bluetooth or insufficient permissions
+                }
+              }
+            ,),
+          ],
+        )
+      )
+    );
+
+  }
+
+   _buildNearbyList(){
+      return ListView(
+        children: <Widget>[
+          ListTile(
+            title: Text('EDE-EE2-E11-ACB-S'),
+            leading: Icon(Icons.account_circle),
+          )
+        ],
+      );
+    }
+
+
+  // _nearbyConnect() async{
+  //   // returns true/false asynchronously 
+  //   // bool a = await Nearby().checkLocationPermissions()
+  //   // asks for permission only if its not given
+  //   Nearby().askLocationPermission();
+  //   Nearby().askLocationAndExternalStoragePermission();
+
+
+  //   try {
+  //       var userName = "Test";
+  //       var strategy = Strategy.P2P_STAR;
+  //       bool a = await Nearby().startAdvertising(
+  //           userName,
+  //           strategy,
+  //           onConnectionInitiated: (String id,ConnectionInfo info) {
+  //           // Called whenever a discoverer requests connection 
+  //               log("String: $id \n Info $info");
+  //           },
+  //           onConnectionResult: (String id,Status status) {
+  //           // Called when connection is accepted/rejected
+  //               log("connection Result $status");
+  //           },
+  //           onDisconnected: (String id) {
+  //           // Callled whenever a discoverer disconnects from advertiser
+  //               log ("Disconnected $id");
+  //           },
+  //           serviceId: "com.kaswarah.contact_tracker", // uniquely identifies your app
+  //       );
+  //   } catch (exception) {
+  //       // platform exceptions like unable to start bluetooth or insufficient permissions 
+  //       log("$exception");
+  //   }
+  // }
+
+
+  // _discoverNearby() async{
+
+  //   var userName = "Test";
+  //   var strategy = Strategy.P2P_STAR;
+  //   try {
+  //       bool a = await Nearby().startDiscovery(
+  //           userName,
+  //           strategy,
+  //           onEndpointFound: (String id,String userName, String serviceId) {
+  //               // called when an advertiser is found
+  //               log("$id");
+  //           },
+  //           onEndpointLost: (String id) {
+  //               //called when an advertiser is lost (only if we weren't connected to it )
+  //               log("Lost $id");
+  //           },
+  //           serviceId: "com.kaswrah.content_tracker", // uniquely identifies your app
+  //       );
+  //   } catch (e) {
+  //       // platform exceptions like unable to start bluetooth or insufficient permissions
+  //       log("$e");
+  //   }
+  // }
+  
+}

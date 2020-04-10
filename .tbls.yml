@@ -1,0 +1,8 @@
+# .tbls.yml
+
+# DSN (Database Source Name) to connect database
+dsn: postgres://postgres:123456@localhost:5432/covidtracker?sslmode=disable
+
+# Path to generate document
+# Default is `dbdoc`
+docPath: doc/schema
