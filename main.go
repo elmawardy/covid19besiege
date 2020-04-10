@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/elmawardy/covid19tracker_backend/database"
+	"github.com/elmawardy/covid19besiege/database"
 	"github.com/valyala/fastjson"
 
 	"github.com/dgrijalva/jwt-go"
