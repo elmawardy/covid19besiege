@@ -5,6 +5,4 @@
 
 [Mobile Application (Flutter)](./MobileApp)
 
-![App gif](https://i.imgur.com/Y37ZSAJ.gifv)
-
-
+![MobileApp gif](https://i.imgur.com/Y37ZSAJ.gif)
