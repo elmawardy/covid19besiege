@@ -1,7 +1,7 @@
 # covid19besiege
 
 
-[Database Schema](./docs/schema)
+[Database Schema](./doc/schema)
 
 [Mobile Application (Flutter)](./MobileApp)
 
