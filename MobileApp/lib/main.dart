@@ -40,10 +40,16 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   final List<Tab> myTabs = <Tab>[
     Tab(
         text: 'Nearby',
+        icon: Icon(Icons.near_me),
     ),
     Tab(
-        text: 'History'
+        text: 'History',
+        icon: Icon(Icons.history),
       ),
+    Tab(
+      text: 'Map',
+      icon: Icon(Icons.map),
+    ),
   ];
 
   // final List<Widget> tabContent = <Widget>[
@@ -108,7 +114,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           controller: _tabController,
           children: <Widget>[
             NearbyContactsPage(ownerState,nearbyCallback),
-            ContactHistory()
+            ContactHistory(),
+            ContactHistory(),
           ]
         ),
       ),

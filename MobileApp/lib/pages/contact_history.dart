@@ -109,6 +109,7 @@ class _ContactHistoryState extends State<ContactHistory> {
           "${responseJSON[i]['LastLatitude']},${responseJSON[i]['LastLongitude']}",startTime,lastTime,"Unknown"));
       }
 
+      if (this.mounted)
       setState(() {
         historyContacts  = tempContacts;
       });
@@ -118,6 +119,7 @@ class _ContactHistoryState extends State<ContactHistory> {
 
     });
 
+    if (this.mounted)
     setState(() {
         initilOffset = initilOffset+2;
     });
@@ -126,6 +128,7 @@ class _ContactHistoryState extends State<ContactHistory> {
 
   void _refreshHistory() async{
 
+    if (this.mounted)
     setState(() {
       initilOffset = 0;
     });
@@ -154,6 +157,7 @@ class _ContactHistoryState extends State<ContactHistory> {
           "${responseJSON[i]['LastLatitude']},${responseJSON[i]['LastLongitude']}",startTime,lastTime,"Unknown"));
       }
 
+      if (this.mounted)
       setState(() {
         historyContacts  = tempContacts;
       });

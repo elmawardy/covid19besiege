@@ -210,6 +210,7 @@ _foundsome1(String endPointName){
             endPointName,currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0",currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0",DateTime.now(),DateTime.now(),"Unknown"
           )
       );
+      if (this.mounted)
       setState(() {
         nearbyContacts = newContacts;
       });
@@ -223,7 +224,8 @@ _foundsome1(String endPointName){
       
       final newContacts = nearbyContacts;
       newContacts[connectedIndex] = contact;
-
+      
+      if (this.mounted)
       setState(() {
         nearbyContacts = newContacts;
       });
@@ -318,6 +320,7 @@ _incrementNearby(){
       newContacts[i].lastLocation = currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0";
     }
 
+    if (this.mounted)
     setState(() {
       nearbyContacts=  newContacts;
     });
@@ -325,7 +328,7 @@ _incrementNearby(){
 }
 
 _updateTimeAndLocation(){
-  var timer = new Timer.periodic(const Duration(milliseconds:20000), 
+  var timer = new Timer.periodic(const Duration(seconds:20), 
     (Timer t){
         _incrementNearby();
         _getCurrentLocation();
@@ -344,6 +347,8 @@ void _some1left(String deviceId) {
   var tempContact = newContacts.where((item)=>item.id == deviceId).elementAt(0);
   contactsBuffer.add(tempContact);
   newContacts.removeWhere((item) => item.id == deviceId);
+
+  if (this.mounted)
   setState(() {
     nearbyContacts = newContacts;
   });
@@ -370,6 +375,8 @@ Future<void> _changePersonState(String deviceIdAndstate) async {
   
   var tempContacts = nearbyContacts;
   tempContacts[nearbyContacts.indexOf(temp)] = temp;
+
+  if (this.mounted)
   setState(() {
     nearbyContacts = tempContacts;
   });
@@ -410,6 +417,7 @@ Future<void> _changePersonState(String deviceIdAndstate) async {
           
           var tempContacts = nearbyContacts;
           tempContacts[nearbyContacts.indexOf(temp)] = temp;
+          if (this.mounted)
           setState(() {
             nearbyContacts = tempContacts;
           });
