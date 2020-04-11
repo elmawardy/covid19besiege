@@ -72,6 +72,23 @@ public class MainActivity extends FlutterActivity {
         );
 
 
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "samples.flutter.dev/mainconnet")
+        .setMethodCallHandler(
+          (call, result) -> {
+                if (call.method.equals("changeOwnerState")) {
+                    System.out.println("Java : Owner changed state");
+                    connectionsClient.stopAdvertising();
+                    int exitCode = startAdvertising(call.argument("ownerDeviceId"),call.argument("newOwnerState"));
+                     if (exitCode != -1) {
+                        result.success(exitCode);
+                    } else {
+                        result.error("UNAVAILABLE", "Advertising not available.", null);
+                    }
+                }
+          }
+        );
+
+
 
     }
 

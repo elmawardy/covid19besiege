@@ -11,7 +11,7 @@ import 'package:shortid/shortid.dart';
 
 import '../globals.dart';
 // import 'package:nearby_connections/nearby_connections.dart';
-// import 'package:location/location.dart';
+import 'package:location/location.dart';
 
 
 class NearbyContactsPage extends StatefulWidget {
@@ -33,8 +33,8 @@ class _NearbyContactsPageState extends State<NearbyContactsPage>  with Automatic
 
   // final String userName = "asd";
   // final Strategy strategy = Strategy.P2P_STAR;
-  // Location location = new Location();
-  // LocationData currentLocation;
+  Location location = new Location();
+  LocationData currentLocation;
 
   static const platform = const MethodChannel('samples.flutter.dev/nearconnect');
 
@@ -82,7 +82,7 @@ class _NearbyContactsPageState extends State<NearbyContactsPage>  with Automatic
 @override
 Widget build(BuildContext context) {
 
-  var connectionColor = Colors.grey;
+  var connectionColorIcon = Icon(Icons.account_circle,color: Colors.grey);
 
   return Scaffold(
     body: new ListView.builder
@@ -90,16 +90,16 @@ Widget build(BuildContext context) {
             itemCount: nearbyContacts.length,
             itemBuilder: (context,index) {
                 if (nearbyContacts[index].state == "green"){
-                  connectionColor = Colors.green;
+                  connectionColorIcon = Icon(Icons.account_circle,color: Colors.green);
                 }else if (nearbyContacts[index].state == "yellow"){
-                  connectionColor = Colors.orange;
+                  connectionColorIcon = Icon(Icons.account_circle,color: Colors.yellow[600]);
                 }else if (nearbyContacts[index].state == "red"){
-                  connectionColor = Colors.red;
+                  connectionColorIcon = Icon(Icons.account_circle,color: Colors.red);
                 }else{
-                  connectionColor = Colors.grey;
+                  connectionColorIcon = Icon(Icons.account_circle,color: Colors.grey);
                 }
               return ListTile(
-                leading: Icon(Icons.account_circle,color: connectionColor),
+                leading: connectionColorIcon,
                 title: Text('${nearbyContacts[index].id}'),
                 subtitle: Text('${nearbyContacts[index].lastSeen.difference(nearbyContacts[index].firstSeen).inMinutes} Minutes'),
               );
@@ -146,14 +146,11 @@ _identifyBeforeStream() async {
         }
 
         widget.callback("");
-        _streamAndDiscover();
       }
 
-    }).catchError((onError){
-      log("Error Occured $onError");
-      widget.callback("");
-      _streamAndDiscover();
     });
+
+    _streamAndDiscover();
 
 
 
@@ -183,14 +180,14 @@ _streamAndDiscover(){
       log("${e.message}.");
     }
 
-   _incrementTime();
+   _updateTimeAndLocation();
 }
 
 
 _foundsome1(String endPointName){
 
 
-    _changePersonState(endPointName);
+    var immutableEndPointName = endPointName;
 
     // get endpoint name without person state after @prefix state
     endPointName = endPointName.split('@')[0];
@@ -209,7 +206,8 @@ _foundsome1(String endPointName){
       newContacts.add(
           new Contact(
             //endPointName,endPointName,"${currentLocation.latitude},${currentLocation.longitude}","${currentLocation.latitude},${currentLocation.longitude}",DateTime.now(),DateTime.now()
-            endPointName,"0,0","0,0",DateTime.now(),DateTime.now(),"Unknown"
+            //endPointName,"0,0","0,0",DateTime.now(),DateTime.now(),"Unknown"
+            endPointName,currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0",currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0",DateTime.now(),DateTime.now(),"Unknown"
           )
       );
       setState(() {
@@ -221,8 +219,7 @@ _foundsome1(String endPointName){
     }else{
       final contact = nearbyContacts[connectedIndex];
       contact.lastSeen = DateTime.now();
-      //contact.lastLocation =  "${currentLocation.latitude},${currentLocation.longitude}";
-      contact.lastLocation =  "0,0";
+      contact.lastLocation =  currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0";
       
       final newContacts = nearbyContacts;
       newContacts[connectedIndex] = contact;
@@ -234,7 +231,7 @@ _foundsome1(String endPointName){
     }
 
     
-
+    _changePersonState(immutableEndPointName);
     log("$nearbyContacts");
 }
 
@@ -318,7 +315,7 @@ _incrementNearby(){
     var newContacts = nearbyContacts;
     for (var i=0;i<newContacts.length;i++){
       newContacts[i].lastSeen = DateTime.now();
-      // newContacts[i].lastLocation = "${currentLocation.latitude},${currentLocation.longitude}";
+      newContacts[i].lastLocation = currentLocation != null ? "${currentLocation.latitude},${currentLocation.longitude}" : "0,0";
     }
 
     setState(() {
@@ -327,9 +324,12 @@ _incrementNearby(){
   }
 }
 
-_incrementTime(){
-  var timer = new Timer.periodic(const Duration(milliseconds: 5000), 
-    (Timer t)=> _incrementNearby()
+_updateTimeAndLocation(){
+  var timer = new Timer.periodic(const Duration(milliseconds:20000), 
+    (Timer t){
+        _incrementNearby();
+        _getCurrentLocation();
+      }
   );
 
   log("timer state : ${timer.isActive}");
@@ -353,7 +353,44 @@ void _some1left(String deviceId) {
 }
 
 
-void _changePersonState(String deviceIdAndstate){
+Future<void> _changePersonState(String deviceIdAndstate) async {
+
+
+  var personState = deviceIdAndstate.split('@')[1];
+
+  var temp = nearbyContacts.where((contact)=>contact.id == deviceIdAndstate.split('@')[0]).elementAt(0);
+
+
+  if (temp.state != 'green' && temp.state != "Unknown"){
+    if (temp.state == 'yellow' && personState == "red")
+      temp.state = personState;
+  }else{
+    temp.state = personState.toLowerCase();
+  }
+  
+  var tempContacts = nearbyContacts;
+  tempContacts[nearbyContacts.indexOf(temp)] = temp;
+  setState(() {
+    nearbyContacts = tempContacts;
+  });
+
+  if (personState == "red"){
+
+    final prefs = await SharedPreferences.getInstance();
+    var persistentOwnerState = prefs.getString("ownerState");
+    if (persistentOwnerState != null){
+      if (persistentOwnerState != "red")
+          globalOwnerState = "yellow";
+          await prefs.setString("ownerState", globalOwnerState);
+    }
+      
+    widget.callback("");
+    
+  
+  }
+
+
+
   var response = http.post(new Uri.http('${cfg["backendHost"]}', '/person/getstate'),
         headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -368,7 +405,9 @@ void _changePersonState(String deviceIdAndstate){
         if (r['Status'] == "Success"){
           var temp = nearbyContacts.where((contact)=>contact.id == deviceIdAndstate.split('@')[0]).elementAt(0);
         
-          temp.state = r['PersonState']; 
+          if ((temp.state == 'green' || temp.state == "Unknown") || (temp.state == "yellow" && r['PersonState'] == 'red'))
+            temp.state = r['PersonState'];
+          
           var tempContacts = nearbyContacts;
           tempContacts[nearbyContacts.indexOf(temp)] = temp;
           setState(() {
@@ -394,68 +433,38 @@ void _changePersonState(String deviceIdAndstate){
           }
 
         }
-    }).catchError((onError) async {
-
-
-        var personState = deviceIdAndstate.split('@')[1];
-
-        var temp = nearbyContacts.where((contact)=>contact.id == deviceIdAndstate.split('@')[0]).elementAt(0);
-      
-        temp.state = personState; 
-        var tempContacts = nearbyContacts;
-        tempContacts[nearbyContacts.indexOf(temp)] = temp;
-        setState(() {
-          nearbyContacts = tempContacts;
-        });
-
-        if (personState == "red"){
-
-          final prefs = await SharedPreferences.getInstance();
-          var persistentOwnerState = prefs.getString("ownerState");
-          if (persistentOwnerState != null){
-            if (persistentOwnerState != "red")
-                globalOwnerState = "yellow";
-                await prefs.setString("ownerState", globalOwnerState);
-          }
-            
-          widget.callback("");
-          
-        
-        }
-        
-
     });
 }
 
 
-// _getCurrentLocation() async {
+_getCurrentLocation() async {
 
-//   bool _serviceEnabled;
-//   PermissionStatus _permissionGranted;
+  bool _serviceEnabled;
+  PermissionStatus _permissionGranted;
 
-//   _serviceEnabled = await location.serviceEnabled();
-//   if (!_serviceEnabled) {
-//     _serviceEnabled = await location.requestService();
-//     if (!_serviceEnabled) {
-//       return null;
-//     }
-//   }
+  _serviceEnabled = await location.serviceEnabled();
+  if (!_serviceEnabled) {
+    _serviceEnabled = await location.requestService();
+    if (!_serviceEnabled) {
+      return null;
+    }
+  }
 
-//   _permissionGranted = await location.hasPermission();
-//   if (_permissionGranted == PermissionStatus.denied) {
-//     _permissionGranted = await location.requestPermission();
-//     if (_permissionGranted != PermissionStatus.granted) {
-//       return null;
-//     }
-//   }
+  _permissionGranted = await location.hasPermission();
+  if (_permissionGranted == PermissionStatus.denied) {
+    _permissionGranted = await location.requestPermission();
+    if (_permissionGranted != PermissionStatus.granted) {
+      return null;
+    }
+  }
 
-//   currentLocation = await location.getLocation();
-//   Timer.periodic(const Duration(milliseconds:10000), 
-//   (Timer t) async => 
-//     currentLocation = await location.getLocation()
-//   );
+  currentLocation = await location.getLocation();
+  Timer.periodic(const Duration(milliseconds:10000), 
+  (Timer t) async => 
+    currentLocation = await location.getLocation()
+  );
 
-// }
+}
 
 _flushContacts() {
 

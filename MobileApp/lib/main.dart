@@ -1,8 +1,11 @@
 // import 'package:contact_tracker/pages/nearbyContactsPage.dart';
+import 'dart:developer';
+
 import 'package:contact_tracker/pages/contact_history.dart';
 import 'package:contact_tracker/pages/login_page.dart';
 import 'package:contact_tracker/pages/nearbyContactsPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'globals.dart';
@@ -32,6 +35,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   String ownerState = "unknown";
   String deviceId = "";
   bool isUserLoggedIn = false;
+  static const platform = const MethodChannel('samples.flutter.dev/mainconnet');
 
   final List<Tab> myTabs = <Tab>[
     Tab(
@@ -75,12 +79,25 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     else if (ownerState == "yellow")
       stateIcon = Icon(Icons.account_circle,color: Colors.yellowAccent);
 
+      List<String> stateChoices = <String>["Yellow","Green"];
+
     return isUserLoggedIn? MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Row(children: <Widget>[Text('Covid-19 Besiege'),Text(" #$deviceId",style: TextStyle(fontSize:15),)],),
+          title: Column(children: <Widget>[Text('Covid-19 Besiege'),Text(" #$deviceId",style: TextStyle(fontSize:13),)],),
           actions: <Widget>[
-            stateIcon
+            stateIcon,
+            PopupMenuButton<String>(
+              onSelected: _stateChoiceSelected,
+              itemBuilder: (BuildContext context){
+                return stateChoices.map((String choice){
+                  return PopupMenuItem<String>(
+                    child: Text(choice),
+                    value: choice,
+                  );
+                }).toList();
+              },
+            )
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -98,12 +115,28 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     ) : LoginPage(loginCallback);
   }
 
-  loginCallback(loginState) {
+  loginCallback(loginState) async {
     if (loginState == "Success"){
+      final prefs = await SharedPreferences.getInstance();
+
+      var persistentDeviceId = prefs.getString("deviceId");
+      if (persistentDeviceId != null)
+        setState(() {
+          deviceId = persistentDeviceId;
+          global_deviceID = persistentDeviceId;
+        });
+      var persistentOwnerState = prefs.getString("ownerState");
+      if (persistentDeviceId != null)
+        setState(() {
+          globalOwnerState = persistentOwnerState;
+          ownerState = persistentOwnerState;
+        });
+
+
       setState(() {
         isUserLoggedIn = true;
-        ownerState = globalOwnerState;
       });
+      
     }
   }
 
@@ -126,6 +159,27 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
 
 
+  }
+
+  _stateChoiceSelected(String newOwnerState) async {
+    if (newOwnerState == "Yellow" && ownerState!='yellow'){
+      setState(() {
+        ownerState='yellow';
+      });
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString("ownerState",ownerState);
+
+      platform.invokeMethod("changeOwnerState",{"ownerDeviceId":deviceId,"newOwnerState":newOwnerState});
+    }
+    if (newOwnerState == "Green" && ownerState!='green'){
+      setState(() {
+        ownerState='green';
+      });
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString("ownerState",ownerState);
+
+      platform.invokeMethod("changeOwnerState",{"ownerDeviceId":deviceId,"newOwnerState":newOwnerState});
+    }
   }
 
 }
