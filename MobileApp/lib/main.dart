@@ -45,11 +45,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     Tab(
         text: 'History',
         icon: Icon(Icons.history),
-      ),
-    Tab(
-      text: 'Map',
-      icon: Icon(Icons.map),
-    ),
+      )
   ];
 
   // final List<Widget> tabContent = <Widget>[
@@ -112,10 +108,10 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         ),
         body: TabBarView(
           controller: _tabController,
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             NearbyContactsPage(ownerState,nearbyCallback),
-            ContactHistory(),
-            ContactHistory(),
+            ContactHistory()
           ]
         ),
       ),

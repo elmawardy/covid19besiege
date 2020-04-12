@@ -15,7 +15,7 @@ class ContactHistory extends StatefulWidget {
   _ContactHistoryState createState() => _ContactHistoryState();
 }
 
-class _ContactHistoryState extends State<ContactHistory> {
+class _ContactHistoryState extends State<ContactHistory> with AutomaticKeepAliveClientMixin<ContactHistory>{
 
   List<Contact> historyContacts = List<Contact>();
   final dateFormat = new DateFormat('yyyy-MM-dd hh:mm a');
@@ -67,7 +67,6 @@ class _ContactHistoryState extends State<ContactHistory> {
           child: ListView.builder(
             itemBuilder: (c, i) => Container(
               child: ListTile(
-                leading: Icon(Icons.account_circle,color:Colors.green),
                 title: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,6 +168,13 @@ class _ContactHistoryState extends State<ContactHistory> {
     });
 
   }
+
+
+
+  
+
+  @override
+  bool get wantKeepAlive => true;
 
 
 }
