@@ -6,4 +6,4 @@
 
 [Mobile Application (Flutter)](./MobileApp)
 
-![MobileApp gif](https://i.imgur.com/Y37ZSAJ.gif)
+![MobileApp gif](https://i.imgur.com/N2Jo0dF.gif)
