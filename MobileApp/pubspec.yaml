@@ -28,7 +28,7 @@ dependencies:
   shortid: ^0.1.1
   shared_preferences: ^0.5.6+3
   flutter_facebook_login: ^3.0.0
-
+  webview_flutter: ^0.3.19+9
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2

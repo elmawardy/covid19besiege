@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:contact_tracker/pages/contact_history.dart';
 import 'package:contact_tracker/pages/login_page.dart';
 import 'package:contact_tracker/pages/nearbyContactsPage.dart';
+import 'package:contact_tracker/pages/statistics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,7 +46,11 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     Tab(
         text: 'History',
         icon: Icon(Icons.history),
-      )
+      ),
+    Tab(
+      text: 'Stats',
+      icon: Icon(Icons.trending_down),
+    )
   ];
 
   // final List<Widget> tabContent = <Widget>[
@@ -111,7 +116,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             NearbyContactsPage(ownerState,nearbyCallback),
-            ContactHistory()
+            ContactHistory(),
+            StatsPage()
           ]
         ),
       ),
