@@ -22,7 +22,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="contact_tracker"
+        android:label="covid19besiege"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

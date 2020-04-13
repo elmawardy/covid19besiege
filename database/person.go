@@ -87,7 +87,6 @@ func SavePersonContacts(contacts PersonContacts) error {
 func GetContacts(fromDeviceID string, offset int, count int) ([]Contact, error) {
 	db, err := sqlx.Connect(DB["driver"], DB["constring"])
 	if err != nil {
-		defer db.Close()
 		return nil, err
 	}
 
@@ -157,7 +156,6 @@ func GetPersonState(deviceID string) (string, error) {
 func LoginPerson(stringData string) (string, string, error) {
 	db, err := sqlx.Connect(DB["driver"], DB["constring"])
 	if err != nil {
-		defer db.Close()
 		return "", "", err
 	}
 
