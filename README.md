@@ -6,7 +6,7 @@
 
 [Mobile Application (Flutter)](./MobileApp)
 
-<img src="https://i.imgur.com/RvLuO93.gif" alt="alt text" width="200" height="400">
+![MobileApp gif](https://i.imgur.com/zZTunsf.gif)
 
 
 ## TODO
