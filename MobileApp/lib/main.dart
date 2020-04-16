@@ -13,13 +13,11 @@ import 'globals.dart';
 
 void main() => runApp(MyApp());
 
-
 class MyApp extends StatefulWidget {
-  const MyApp({ Key key }) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
   @override
   _MyAppState createState() => _MyAppState();
-} 
-
+}
 
 // class _MyAppState extends State<MyApp> {
 
@@ -32,7 +30,6 @@ class MyApp extends StatefulWidget {
 // }
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
-
   String ownerState = "unknown";
   String deviceId = "";
   bool isUserLoggedIn = false;
@@ -40,17 +37,17 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   final List<Tab> myTabs = <Tab>[
     Tab(
-        text: 'Nearby',
-        icon: Icon(Icons.near_me),
+      text: 'Nearby',
+      icon: Icon(Icons.near_me),
     ),
-    Tab(
-        text: 'History',
-        icon: Icon(Icons.history),
-      ),
     Tab(
       text: 'Stats',
       icon: Icon(Icons.trending_down),
-    )
+    ),
+    Tab(
+      text: 'History',
+      icon: Icon(Icons.history),
+    ),
   ];
 
   // final List<Widget> tabContent = <Widget>[
@@ -67,65 +64,73 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
- @override
- void dispose() {
-   _tabController.dispose();
-   super.dispose();
- }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    var stateIcon = Icon(Icons.account_circle,color: Colors.grey);
+    var stateIcon = Icon(Icons.account_circle, color: Colors.grey);
     if (ownerState == "unknown")
-      stateIcon = Icon(Icons.account_circle,color: Colors.grey);
+      stateIcon = Icon(Icons.account_circle, color: Colors.grey);
     else if (ownerState == "green")
-      stateIcon = Icon(Icons.account_circle,color: Colors.greenAccent);
+      stateIcon = Icon(Icons.account_circle, color: Colors.greenAccent);
     else if (ownerState == "red")
-      stateIcon = Icon(Icons.account_circle,color: Colors.red[400]);
+      stateIcon = Icon(Icons.account_circle, color: Colors.red[400]);
     else if (ownerState == "yellow")
-      stateIcon = Icon(Icons.account_circle,color: Colors.yellowAccent);
+      stateIcon = Icon(Icons.account_circle, color: Colors.yellowAccent);
 
-      List<String> stateChoices = <String>["Yellow","Green"];
+    List<String> stateChoices = <String>["Yellow", "Green"];
 
-    return isUserLoggedIn? MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Column(children: <Widget>[Text('Covid-19 Besiege'),Text(" #$deviceId",style: TextStyle(fontSize:13),)],),
-          actions: <Widget>[
-            stateIcon,
-            PopupMenuButton<String>(
-              onSelected: _stateChoiceSelected,
-              itemBuilder: (BuildContext context){
-                return stateChoices.map((String choice){
-                  return PopupMenuItem<String>(
-                    child: Text(choice),
-                    value: choice,
-                  );
-                }).toList();
-              },
-            )
-          ],
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: myTabs,
-          ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            NearbyContactsPage(ownerState,nearbyCallback),
-            ContactHistory(),
-            StatsPage()
-          ]
-        ),
-      ),
-    ) : LoginPage(loginCallback);
+    return isUserLoggedIn
+        ? MaterialApp(
+            home: Scaffold(
+              appBar: AppBar(
+                title: Column(
+                  children: <Widget>[
+                    Text('Covid-19 Besiege'),
+                    Text(
+                      " #$deviceId",
+                      style: TextStyle(fontSize: 13),
+                    )
+                  ],
+                ),
+                actions: <Widget>[
+                  stateIcon,
+                  PopupMenuButton<String>(
+                    onSelected: _stateChoiceSelected,
+                    itemBuilder: (BuildContext context) {
+                      return stateChoices.map((String choice) {
+                        return PopupMenuItem<String>(
+                          child: Text(choice),
+                          value: choice,
+                        );
+                      }).toList();
+                    },
+                  )
+                ],
+                bottom: TabBar(
+                  controller: _tabController,
+                  tabs: myTabs,
+                ),
+              ),
+              body: TabBarView(
+                  controller: _tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: <Widget>[
+                    NearbyContactsPage(ownerState, nearbyCallback),
+                    StatsPage(),
+                    ContactHistory()
+                  ]),
+            ),
+          )
+        : LoginPage(loginCallback);
   }
 
   loginCallback(loginState) async {
-    if (loginState == "Success"){
+    if (loginState == "Success") {
       final prefs = await SharedPreferences.getInstance();
 
       var persistentDeviceId = prefs.getString("deviceId");
@@ -141,20 +146,17 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
           ownerState = persistentOwnerState;
         });
 
-
       setState(() {
         isUserLoggedIn = true;
       });
-      
     }
   }
 
   nearbyCallback(placeholder) async {
-
     final prefs = await SharedPreferences.getInstance();
 
     var persistentOwnerState = prefs.getString("ownerState");
-    if (persistentOwnerState != null){
+    if (persistentOwnerState != null) {
       setState(() {
         ownerState = persistentOwnerState;
       });
@@ -165,30 +167,28 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       setState(() {
         deviceId = persistentDeviceId;
       });
-
-
-
   }
 
   _stateChoiceSelected(String newOwnerState) async {
-    if (newOwnerState == "Yellow" && ownerState!='yellow'){
+    if (newOwnerState == "Yellow" && ownerState != 'yellow') {
       setState(() {
-        ownerState='yellow';
+        ownerState = 'yellow';
       });
       final prefs = await SharedPreferences.getInstance();
-      prefs.setString("ownerState",ownerState);
+      prefs.setString("ownerState", ownerState);
 
-      platform.invokeMethod("changeOwnerState",{"ownerDeviceId":deviceId,"newOwnerState":newOwnerState});
+      platform.invokeMethod("changeOwnerState",
+          {"ownerDeviceId": deviceId, "newOwnerState": newOwnerState});
     }
-    if (newOwnerState == "Green" && ownerState!='green'){
+    if (newOwnerState == "Green" && ownerState != 'green') {
       setState(() {
-        ownerState='green';
+        ownerState = 'green';
       });
       final prefs = await SharedPreferences.getInstance();
-      prefs.setString("ownerState",ownerState);
+      prefs.setString("ownerState", ownerState);
 
-      platform.invokeMethod("changeOwnerState",{"ownerDeviceId":deviceId,"newOwnerState":newOwnerState});
+      platform.invokeMethod("changeOwnerState",
+          {"ownerDeviceId": deviceId, "newOwnerState": newOwnerState});
     }
   }
-
 }

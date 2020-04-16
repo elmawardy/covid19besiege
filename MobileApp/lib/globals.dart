@@ -5,7 +5,7 @@ String globalOwnerState = "unknown";
 String globalJWT = "";
 
 var cfg = {
-  "backendHost":"env-4282490.it1.eur.aruba.jenv-aruba.cloud",
-  "dev":false,
-  "statsPageEgypt":"https://env-4282490.it1.eur.aruba.jenv-aruba.cloud/static/stats_egypt.html"
+  "backendHost": "covid19besiege.org",
+  "dev": false,
+  "statsPage": "https://covid19besiege.org"
 };

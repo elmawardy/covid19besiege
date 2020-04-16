@@ -34,13 +34,13 @@ type PersonContacts struct {
 func main() {
 	r := mux.NewRouter().StrictSlash(true)
 
-	r.HandleFunc("/contacts/add", contactAddHandler)
-	r.HandleFunc("/contacts/get", contactsGetHandler)
-	r.HandleFunc("/person/getstate", getPersonState)
-	r.HandleFunc("/login/fb", loginUserByFacebookToken)
+	r.HandleFunc("/api/contacts/add", contactAddHandler)
+	r.HandleFunc("/api/contacts/get", contactsGetHandler)
+	r.HandleFunc("/api/person/getstate", getPersonState)
+	r.HandleFunc("/api/login/fb", loginUserByFacebookToken)
 
-	r.PathPrefix("/static/").
-		Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	r.PathPrefix("/").
+		Handler(http.StripPrefix("/", http.FileServer(http.Dir("./static"))))
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }

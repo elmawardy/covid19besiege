@@ -20,5 +20,5 @@ Before you start you should create Facebook SDK app and attach this to this app 
 https://pub.dev/packages/flutter_facebook_login
 
 
-You should also change the statsPageEgypt config in globals.dart , this page should be https unless you choose plain text for development you need to check this :
+You should also change the statsPage config in globals.dart , this page should be https unless you choose plain text for development you need to check this :
 https://stackoverflow.com/questions/52707918/webview-showing-err-cleartext-not-permitted-although-site-is-https

@@ -1,13 +1,12 @@
 # covid19besiege
 
-![version](https://img.shields.io/static/v1?label=version&message=3.1.1&color=green)
+![version](https://img.shields.io/static/v1?label=version&message=3.2.0&color=green)
 
 [Database Schema](./doc/schema)
 
 [Mobile Application (Flutter)](./MobileApp)
 
 ![MobileApp gif](https://i.imgur.com/zZTunsf.gif)
-
 
 ## TODO
 
@@ -19,4 +18,4 @@
 - &#9744; Get specific states/districts statistics
 - &#9744; Performance Tuning
 - &#9744; Stats gathered from native
-dataset
+  dataset

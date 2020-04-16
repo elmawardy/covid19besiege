@@ -5,7 +5,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../globals.dart';
 
-
 final webViewKey = GlobalKey<WebViewContainerState>();
 
 class WebViewContainer extends StatefulWidget {
@@ -21,7 +20,7 @@ class WebViewContainerState extends State<WebViewContainer> {
   @override
   Widget build(BuildContext context) {
     return WebView(
-      initialUrl: '${cfg["statsPageEgypt"]}',
+      initialUrl: '${cfg["statsPage"]}',
       javascriptMode: JavascriptMode.unrestricted,
       onWebViewCreated: (controller) {
         _webViewController = controller;
@@ -62,7 +61,6 @@ class WebViewContainerState extends State<WebViewContainer> {
           );
         });
   }
-
 }
 
 class StatsPage extends StatefulWidget {
@@ -70,9 +68,8 @@ class StatsPage extends StatefulWidget {
   _StatsPageState createState() => _StatsPageState();
 }
 
-class _StatsPageState extends State<StatsPage> {
-
-
+class _StatsPageState extends State<StatsPage>
+    with AutomaticKeepAliveClientMixin<StatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,4 +86,6 @@ class _StatsPageState extends State<StatsPage> {
     );
   }
 
+  @override
+  bool get wantKeepAlive => true;
 }
