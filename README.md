@@ -6,7 +6,7 @@
 
 [Mobile Application (Flutter)](./MobileApp)
 
-![MobileApp gif](https://i.imgur.com/zZTunsf.gif)
+![MobileApp gif](https://i.imgur.com/whmPh9u.gif)
 
 ## TODO
 
