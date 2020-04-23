@@ -1,12 +1,21 @@
 # covid19besiege
 
-![version](https://img.shields.io/static/v1?label=version&message=3.2.0&color=green)
+![version](https://img.shields.io/static/v1?label=version&message=3.3.0&color=green)
 
 [Database Schema](./doc/schema)
 
 [Mobile Application (Flutter)](./MobileApp)
 
 ![MobileApp gif](https://i.imgur.com/whmPh9u.gif)
+
+
+## Backend quick installation (Docker)
+- install docker and [docker-compose](https://docs.docker.com/compose/install/) if they are not installed
+- cd to docker directory inside the project
+- run **#docker-compose up**
+  - this should download and run the project public docker containers on your local pc.
+  - this exposes port 8000:8000 by default so make sure port 8000 is free or change the port before ":" sign in docker-compose.yml
+  - makre sure your host ip in globals.dart matches your pc ip.
 
 ## TODO
 

@@ -59,7 +59,7 @@ func getPersonState(w http.ResponseWriter, r *http.Request) {
 	var p fastjson.Parser
 	responseJSON, err := p.Parse(string(body))
 
-	personState, err := database.GetPersonState(string(responseJSON.GetStringBytes("deviceId")))
+	personState, err := database.GetPersonStateByDeviceID(string(responseJSON.GetStringBytes("deviceId")))
 	if err != nil {
 		log.Println(err)
 		fmt.Fprintf(w, `%v`, `{"Status":"Error","Msg":"Error processing DB"}`)
