@@ -5,7 +5,7 @@ String globalOwnerState = "unknown";
 String globalJWT = "";
 
 var cfg = {
-  "backendHost": "covid19besiege.org",
-  "dev": false,
-  "statsPage": "https://covid19besiege.org"
+  "backendHost": "192.168.1.2:8000",
+  "dev": true,
+  "statsPage": "http://192.168.1.2:8000"
 };

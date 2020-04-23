@@ -127,7 +127,7 @@ class _NearbyContactsPageState extends State<NearbyContactsPage>
       if (r['Status'] == "Success") {
         globalOwnerState = r['PersonState'];
         var persistendOwnerState = prefs.getString("ownerState");
-        if (persistendOwnerState != null)
+        if (persistendOwnerState != null && persistendOwnerState != "")
           globalOwnerState = persistendOwnerState;
         else {
           await prefs.setString("ownerState", globalOwnerState);

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/go-redis/redis"
 	"github.com/teris-io/shortid"
 	"github.com/valyala/fastjson"
 
@@ -126,6 +127,26 @@ func GetContacts(fromDeviceID string, offset int, count int) ([]Contact, error) 
 
 }
 
+//GetPersonStateByDeviceID gets person state by device id from Redis store
+func GetPersonStateByDeviceID(deviceID string) (string, error) {
+	client := redis.NewClient(&redis.Options{
+		Addr:     DB["redishost"] + ":6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
+	state, err := client.HGet("device:"+deviceID, "state").Result()
+	if err == redis.Nil {
+		fmt.Println("Redis: " + deviceID + "does not exist")
+		return "", err
+	} else if err != nil {
+		fmt.Println(err)
+		return "", err
+	} else {
+		return state, nil
+	}
+}
+
 // GetPersonState ...
 func GetPersonState(deviceID string) (string, error) {
 	db, err := sqlx.Connect(DB["driver"], DB["constring"])
@@ -150,6 +171,22 @@ func GetPersonState(deviceID string) (string, error) {
 	defer db.Close()
 	return personState, err
 
+}
+
+// _setUserStateByDeviceID sets deviceid state that corresponds to a user in a Redis store
+func _setUserStateByDeviceID(deviceID string, state string) error {
+	client := redis.NewClient(&redis.Options{
+		Addr:     DB["redishost"] + ":6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	err := client.HSet("device:"+deviceID, "state", state).Err()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
 }
 
 // LoginPerson ...
@@ -185,6 +222,12 @@ func LoginPerson(stringData string) (string, string, error) {
 	db.MustExec(query, "green", string(jsonData.GetStringBytes("name")), string(jsonData.GetStringBytes("email")), personData.deviceID)
 
 	defer db.Close()
+
+	err = _setUserStateByDeviceID(personData.deviceID, "green")
+	if err != nil {
+		return personData.deviceID, personData.personState, err
+	}
+
 	return personData.deviceID, personData.personState, nil
 
 }
