@@ -1,6 +1,6 @@
 # covid19besiege
 
-![version](https://img.shields.io/static/v1?label=version&message=3.3.0&color=green)
+![version](https://img.shields.io/static/v1?label=version&message=3.4.0&color=green)
 
 [Database Schema](./doc/schema)
 
