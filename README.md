@@ -22,9 +22,9 @@
 - &#10004; detect nearby devices & save in db
 - &#10004; get contact history
 - &#10004; Stats/Awareness page
-- &#9744; Stat all known countries
+- &#10004; Stat other countries
 - &#10004; Stat Refresh button
 - &#9744; Get specific states/districts statistics
-- &#9744; Performance Tuning
+- &#10004; Read/Write person state in redis cache
 - &#9744; Stats gathered from native
   dataset
