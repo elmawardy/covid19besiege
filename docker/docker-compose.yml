@@ -5,7 +5,7 @@ services:
   db:
     image: "elmawardy/cb-db:3.2.0"
   web:
-    image: "elmawardy/cb-web:3.2.1"
+    image: "elmawardy/cb-web:1"
     ports:
       - "8000:8000"
 
